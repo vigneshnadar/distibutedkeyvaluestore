@@ -6,6 +6,8 @@ import (
 "net/http"
 "io/ioutil"
 "os"
+"sync"
+"strings"
 )
 
 type distributedserver struct {
@@ -40,6 +42,71 @@ func createRequest(apiurl string, reqBody interface{}, apimethod string) *http.R
     }
 
   return req
+}
+
+// this function takes responses from all distributed servers and concatenates all the key values into a single json
+func concatenateServerResp(resps []*http.Response) ([]byte, int) {
+
+ final := make([]serverFetchResp, 0)
+ code := 200
+
+// loop over all response and concatenate json
+ for _, response : range resps {
+
+        if response.StatusCode >= 200 {
+        body := loadRespBody(response)
+        sresp := loadServerFetchResp(body)
+
+        final = append(final, sresp...)
+       response.Body.Close()
+        } // end of if
+
+        // the json body is encoded
+        body, err := json.Marshal(final)
+
+        if e != nil {
+            fmt.Fprintln(err)
+            return nil
+            }
+
+        return body, code
+
+ }
+}
+
+func requestServers(reqs []*http.Request) {
+
+     // when a server is requested it should be locked so that write does not occur at same time
+     var mutex = &sync.Mutex{}
+     var wg sync.WaitGroup
+
+     resps := make([]*http.Response, 0)
+
+     wg.Add(len(reqs))
+
+     for _, curReq : range reqs {
+
+     go func(curReq *http.Request)   {
+     defer wg.Done()
+     curReq.Header.Set("Content-type", "application/json")
+     client := &http.Client{}
+     resp, err := client.Do(curReq)
+     if err != nil {
+       panic(err)
+       } else {
+       mutex.Lock()
+       resps = append(resps, resp)
+       mutex.UnLock()
+       }
+
+     }(curReq)
+     } //end of for
+
+     wg.Wait()
+
+     return concatenateServerResp(resps)
+
+
 }
 
 func getkeyvalue(w http.ResponseWriter, r *http.Request) {
