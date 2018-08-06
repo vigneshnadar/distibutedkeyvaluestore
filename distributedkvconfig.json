@@ -10,5 +10,13 @@
   {
     "Host" : "localhost",
     "PortNum" : 5002
+  },
+  {
+    "Host" : "localhost",
+    "PortNum" : 5003
+  },
+  {
+    "Host" : "localhost",
+    "PortNum" : 5004
   }
 ]
