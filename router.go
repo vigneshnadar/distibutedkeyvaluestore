@@ -315,7 +315,8 @@ os.Exit(1)
 
 // Hnadles the PUT REQUEST
 func putkeyvalue(w http.ResponseWriter, r *http.Request) {
-    // fmt.Fprintln("Hi getting key value")
+    var meth = "PUT"
+    fmt.Printf("Hi putting key value %s\n", meth)
 
 
     body := loadReqBody(r)
@@ -342,6 +343,8 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     // select server by mod logic
     serverIdx := int(hash(keyValStr)) % len(keyValServer)
 
+    fmt.Printf("Server Id %d\n", serverIdx)
+
     // at the same time there can be multiple requests so append them
     serverReqMap[serverIdx] = append(serverReqMap[serverIdx], setReqs[i])
 
@@ -355,26 +358,28 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
    // array of requests
     reqs := make([]*http.Request, 0)
 
-    for i:=0; i < len(setReqs); i++ {
+    for i:=0; i < len(keyValServer); i++ {
 
             serverReqs :=  serverReqMap[i]
 
             // check if there is a request present
+            fmt.Printf("Hi putting key value %d\n", len(serverReqs))
             if len(serverReqs) > 0 {
+            fmt.Println("server request\n")
             serverEndPoint := fmt.Sprintf("http://%s:%d/set", keyValServer[i].Host, keyValServer[i].PortNum)
 
 
              httpReq := createRequest(serverEndPoint, serverReqs, http.MethodPut)
                     reqs = append(reqs, httpReq)
+                    } // end of if
                 } // end of for
 
                 result, resultcode := requestSetServers(reqs)
                 sendResponse(w, r, result, resultcode)
 
 
-    } // end of for
+    } // end of func
 
-}
 
 func main() {
 
