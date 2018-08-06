@@ -206,6 +206,7 @@ func concatenateServerResp(resps []*http.Response) ([]byte, int) {
 
 }
 
+// this function creates a request pool and makes asynchronous GET request to servers
 func requestServers(reqs []*http.Request) ([]byte, int) {
 
      // when a server is requested it should be locked so that write does not occur at same time
@@ -242,7 +243,7 @@ func requestServers(reqs []*http.Request) ([]byte, int) {
 }
 
 
-
+// this function creates a request pool and makes asynchronous PUT request to servers
 func requestSetServers(reqs []*http.Request) ([]byte, int) {
 
      // when a server is requested it should be locked so that write does not occur at same time
@@ -312,7 +313,7 @@ os.Exit(1)
 }
 
 
-
+// Hnadles the PUT REQUEST
 func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     // fmt.Fprintln("Hi getting key value")
 
@@ -377,11 +378,12 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-
+// reads all the servers IP and port from config file
 data, err := ioutil.ReadFile("distributedkvconfig.json")
 validate(err)
 json.Unmarshal(data, &keyValServer)
 
+   // routing
 http.HandleFunc("/", handler)
 http.HandleFunc("/fetch", getkeyvalue)
 http.HandleFunc("/putkv", putkeyvalue)
