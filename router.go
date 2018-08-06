@@ -224,9 +224,8 @@ func requestServers(reqs []*http.Request) ([]byte, int) {
      curReq.Header.Set("Content-type", "application/json")
      client := &http.Client{}
      resp, err := client.Do(curReq)
-     if err != nil {
-       panic(err)
-       } else {
+     if err == nil {
+
        mutex.Lock()
        resps = append(resps, resp)
        mutex.Unlock()
@@ -261,9 +260,8 @@ func requestSetServers(reqs []*http.Request) ([]byte, int) {
      curReq.Header.Set("Content-type", "application/json")
      client := &http.Client{}
      resp, err := client.Do(curReq)
-     if err != nil {
-       panic(err)
-       } else {
+     if err == nil {
+
        mutex.Lock()
        resps = append(resps, resp)
        mutex.Unlock()
