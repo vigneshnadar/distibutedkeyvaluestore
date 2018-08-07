@@ -40,6 +40,10 @@ type clientSetReq struct {
     Value Encoded `json:"value"`
 }
 
+type clientFetQueReq struct {
+    Key Encoded `json:"key"`
+}
+
 var keyValServer []distributedserver
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -125,6 +129,9 @@ json.Unmarshal(jsonBytes, &resps)
 return resps
 }
 
+
+
+
 // takes the body as bytes , unmarshalls it and returns the struct
 func loadServerFetchResp(jsonBytes []byte) []serverFetchResp {
 var resps []serverFetchResp
@@ -173,6 +180,50 @@ func concatenateSetServerResp(resps []*http.Response) ([]byte, int) {
         return body, code
 
 }
+
+
+
+
+// this function takes responses from all distributed servers and concatenates all the key values into a single json
+func concatenateFetchServerResp(resps []*http.Response) ([]byte, int) {
+
+ final := make([]serverFetchResp, 0)
+
+ code := 200
+
+// loop over all response and concatenate json
+ for _, response := range resps {
+
+        if response.StatusCode >= 200 {
+        body := loadRespBody(response)
+
+
+        // the server returns the keys added
+        sresp := loadServerFetchResp(body)
+
+
+
+        final = append(final, sresp...)
+
+        } else {
+        code = 206
+        }
+         response.Body.Close()
+        } // end of for
+
+
+        // the json body is encoded
+        body, err := json.Marshal(final)
+
+        if err != nil {
+            // fmt.Fprintln(err)
+            return nil, 500
+            }
+
+        return body, code
+
+}
+
 
 
 // this function takes responses from all distributed servers and concatenates all the key values into a single json
@@ -273,6 +324,42 @@ func requestSetServers(reqs []*http.Request) ([]byte, int) {
      wg.Wait()
 
      return concatenateSetServerResp(resps)
+
+
+}
+
+
+// this function creates a request pool and makes asynchronous PUT request to servers
+func requestFetchServers(reqs []*http.Request) ([]byte, int) {
+
+     // when a server is requested it should be locked so that write does not occur at same time
+     var mutex = &sync.Mutex{}
+     var wg sync.WaitGroup
+
+     resps := make([]*http.Response, 0)
+
+     wg.Add(len(reqs))
+
+     for _, curReq := range reqs {
+
+     go func(curReq *http.Request)   {
+     defer wg.Done()
+     curReq.Header.Set("Content-type", "application/json")
+     client := &http.Client{}
+     resp, err := client.Do(curReq)
+     if err == nil {
+
+       mutex.Lock()
+       resps = append(resps, resp)
+       mutex.Unlock()
+       }
+
+     }(curReq)
+     } //end of for
+
+     wg.Wait()
+
+     return concatenateFetchServerResp(resps)
 
 
 }
@@ -379,6 +466,80 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     } // end of func
 
 
+
+func extractKey(jsonBytes []byte) []clientFetQueReq {
+var req []clientFetQueReq
+json.Unmarshal(jsonBytes, &req)
+return req
+}
+
+// Hnadles the PUT REQUEST
+func getvalue(w http.ResponseWriter, r *http.Request) {
+    var meth = "POST"
+    fmt.Printf("Hi GET corresponding  value %s\n", meth)
+
+
+    body := loadReqBody(r)
+    keyReceived := extractKey(body)
+
+
+    isValid := true
+    serverReqMap := make(map[int] []Encoded)
+
+    for i:=0; i < len(keyReceived); i++ {
+
+    // keyEncoding := setReqs[i].Key.Encoding
+    keyVal := keyReceived[i].Key.Data
+    keyValStr := keyVal
+
+    // if keyEncoding == "binary" {
+      //  keyValStr, isValid := binToStr(keyValStr)
+    // }
+
+    if !isValid {
+    break
+    }
+
+    // select server by mod logic
+    serverIdx := int(hash(keyValStr)) % len(keyValServer)
+
+    fmt.Printf("Server Id %d\n", serverIdx)
+
+    // at the same time there can be multiple requests so append them
+    serverReqMap[serverIdx] = append(serverReqMap[serverIdx], keyReceived[i].Key)
+
+    } // end of for
+
+
+    if !isValid {
+    return
+    }
+
+   // array of requests
+    reqs := make([]*http.Request, 0)
+
+    for i:=0; i < len(keyValServer); i++ {
+
+            serverReqs :=  serverReqMap[i]
+
+            // check if there is a request present
+            fmt.Printf("Hi putting key value %d\n", len(serverReqs))
+            if len(serverReqs) > 0 {
+            fmt.Println("server request\n")
+            serverEndPoint := fmt.Sprintf("http://%s:%d/fetch", keyValServer[i].Host, keyValServer[i].PortNum)
+
+
+             httpReq := createRequest(serverEndPoint, serverReqs, http.MethodPost)
+                    reqs = append(reqs, httpReq)
+                    } // end of if
+                } // end of for
+
+                result, resultcode := requestFetchServers(reqs)
+                sendResponse(w, r, result, resultcode)
+
+
+    } // end of func
+
 func main() {
 
 // reads all the servers IP and port from config file
@@ -388,7 +549,8 @@ json.Unmarshal(data, &keyValServer)
 
    // routing
 http.HandleFunc("/", handler)
-http.HandleFunc("/fetch", getkeyvalue)
+http.HandleFunc("/getallkv", getkeyvalue)
+http.HandleFunc("/getkv", getvalue)
 http.HandleFunc("/putkv", putkeyvalue)
 log.Fatal(http.ListenAndServe(":8080",  nil))
 }
