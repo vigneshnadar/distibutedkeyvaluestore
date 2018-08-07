@@ -2,21 +2,5 @@
   {
     "Host" : "localhost",
     "PortNum" : 5000
-  },
-  {
-    "Host" : "localhost",
-    "PortNum" : 5001
-  },
-  {
-    "Host" : "localhost",
-    "PortNum" : 5002
-  },
-  {
-    "Host" : "localhost",
-    "PortNum" : 5003
-  },
-  {
-    "Host" : "localhost",
-    "PortNum" : 5004
   }
 ]

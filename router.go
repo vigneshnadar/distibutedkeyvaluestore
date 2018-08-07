@@ -25,23 +25,23 @@ type Encoded struct {
 
 
 type serverFetchResp struct {
-    Key Encoded `json:"key"`
-    Value *Encoded `json:"value"`
+    Key string `json:"Key"`
+    Value *string `json:"Value"`
 }
 
 
 type serverSetResp struct {
     KeysAdded int `json:"keys_added"`
-    KeysFailed []Encoded `json:"keys_failed"`
+    KeysFailed []clientFetQueReq `json:"keys_failed"`
 }
 
 type clientSetReq struct {
-    Key Encoded `json:"key"`
-    Value Encoded `json:"value"`
+    Key string `json:"Key"`
+    Value string `json:"Value"`
 }
 
 type clientFetQueReq struct {
-    Key Encoded `json:"key"`
+    Key string `json:"Key"`
 }
 
 var keyValServer []distributedserver
@@ -144,7 +144,7 @@ return resps
 // this function takes responses from all distributed servers and concatenates all the key values into a single json
 func concatenateSetServerResp(resps []*http.Response) ([]byte, int) {
 
- keysFailed := make([]Encoded, 0)
+ keysFailed := make([]clientFetQueReq, 0)
  keysAdded := 0
  code := 200
 
@@ -414,7 +414,10 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     for i:=0; i < len(setReqs); i++ {
 
     // keyEncoding := setReqs[i].Key.Encoding
-    keyVal := setReqs[i].Key.Data
+    keyVal := setReqs[i].Key
+
+    fmt.Printf("the key is %s\n", keyVal)
+    fmt.Printf("the value is %s\n", setReqs[i].Value)
     keyValStr := keyVal
 
     // if keyEncoding == "binary" {
@@ -484,12 +487,12 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
 
 
     isValid := true
-    serverReqMap := make(map[int] []Encoded)
+    serverReqMap := make(map[int] []clientFetQueReq)
 
     for i:=0; i < len(keyReceived); i++ {
 
     // keyEncoding := setReqs[i].Key.Encoding
-    keyVal := keyReceived[i].Key.Data
+    keyVal := keyReceived[i].Key
     keyValStr := keyVal
 
     // if keyEncoding == "binary" {
@@ -506,7 +509,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
     fmt.Printf("Server Id %d\n", serverIdx)
 
     // at the same time there can be multiple requests so append them
-    serverReqMap[serverIdx] = append(serverReqMap[serverIdx], keyReceived[i].Key)
+    serverReqMap[serverIdx] = append(serverReqMap[serverIdx], keyReceived[i])
 
     } // end of for
 
