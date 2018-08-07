@@ -11,6 +11,7 @@ import (
 "encoding/json"
 "encoding/base64"
 "bytes"
+"time"
 )
 
 type distributedserver struct {
@@ -374,6 +375,7 @@ w.Write(reply)
 
 func getkeyvalue(w http.ResponseWriter, r *http.Request) {
     // fmt.Fprintln("Hi getting key value")
+    start := time.Now()
 
     allserverreq := make([]*http.Request, 0)
 
@@ -388,6 +390,7 @@ func getkeyvalue(w http.ResponseWriter, r *http.Request) {
 
     result, resultcode := requestServers(allserverreq)
     sendResponse(w, r, result, resultcode)
+    fmt.Println("TOTAL TIME TAKEN %s", time.Since(start))
 }
 
 func validate(e error) {
@@ -400,6 +403,7 @@ os.Exit(1)
 
 // Hnadles the PUT REQUEST
 func putkeyvalue(w http.ResponseWriter, r *http.Request) {
+    start := time.Now()
     var meth = "PUT"
     fmt.Printf("Hi putting key value %s\n", meth)
 
@@ -465,7 +469,7 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
                 result, resultcode := requestSetServers(reqs)
                 sendResponse(w, r, result, resultcode)
 
-
+        fmt.Println("TOTAL TIME TAKEN %s", time.Since(start))
     } // end of func
 
 
@@ -478,6 +482,7 @@ return req
 
 // Hnadles the PUT REQUEST
 func getvalue(w http.ResponseWriter, r *http.Request) {
+    start :=  time.Now()
     var meth = "POST"
     fmt.Printf("Hi GET corresponding  value %s\n", meth)
 
@@ -540,7 +545,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
                 result, resultcode := requestFetchServers(reqs)
                 sendResponse(w, r, result, resultcode)
 
-
+        fmt.Println("TOTAL TIME TAKEN %s", time.Since(start))
     } // end of func
 
 func main() {
