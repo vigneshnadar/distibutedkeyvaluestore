@@ -529,7 +529,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
             fmt.Printf("Hi putting key value %d\n", len(serverReqs))
             if len(serverReqs) > 0 {
             fmt.Println("server request\n")
-            serverEndPoint := fmt.Sprintf("http://%s:%d/fetch", keyValServer[i].Host, keyValServer[i].PortNum)
+            serverEndPoint := fmt.Sprintf("http://%s:%d/getkv", keyValServer[i].Host, keyValServer[i].PortNum)
 
 
              httpReq := createRequest(serverEndPoint, serverReqs, http.MethodPost)

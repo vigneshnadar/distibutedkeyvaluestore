@@ -144,6 +144,7 @@ func main(){
   // muxr.HandleFunc("/getkv", handleFetch).Methods("POST")
   http.HandleFunc("/fetch", handleGetAllKeys)
    http.HandleFunc("/set", handleSet)
+   http.HandleFunc("/getkv", handleFetch)
 
   log.Fatal(http.ListenAndServe(serverPort, nil))
 }
