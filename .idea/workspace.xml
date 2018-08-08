@@ -20,8 +20,8 @@
       <file leaf-file-name="router.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/router.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="444">
-              <caret line="177" column="24" selection-start-line="177" selection-start-column="24" selection-end-line="177" selection-end-column="24" />
+            <state relative-caret-position="273">
+              <caret line="215" column="9" selection-start-line="215" selection-start-column="9" selection-end-line="215" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -29,8 +29,8 @@
       <file leaf-file-name="server.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="316">
-              <caret line="146" column="26" selection-start-line="146" selection-start-column="21" selection-end-line="146" selection-end-column="26" />
+            <state relative-caret-position="1273">
+              <caret line="87" column="26" selection-start-line="87" selection-start-column="16" selection-end-line="87" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -48,7 +48,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_do_set</find>
       <find>Fet</find>
       <find>concatenateFetchServerResp</find>
       <find>handleGetAllKeys</find>
@@ -58,12 +57,9 @@
       <find>.Data</find>
       <find>sendResponse</find>
       <find>json.Unmarshal(jsonBytes, &amp;resps)</find>
-      <find>loadRespBody</find>
       <find>requestSetServers</find>
       <find>concatenateSetServerResp</find>
-      <find>loadReqBody</find>
       <find>loadSetRequest</find>
-      <find>NewDecoder</find>
       <find>TOTAL</find>
       <find>createRequest</find>
       <find>getkeyvalue</find>
@@ -78,6 +74,10 @@
       <find>clientFetQueReq</find>
       <find>serverSetResp</find>
       <find>loadServerSetResp</find>
+      <find>set</find>
+      <find>loadReqBody</find>
+      <find>NewDecoder</find>
+      <find>loadRespBody</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -155,12 +155,12 @@
       <option name="presentableId" value="Default" />
       <updated>1533494811958</updated>
       <workItem from="1533494813516" duration="14889000" />
-      <workItem from="1533661459624" duration="13968000" />
+      <workItem from="1533661459624" duration="15548000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28857000" />
+    <option name="totallyTimeSpent" value="30437000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="823" extended-state="6" />
@@ -219,13 +219,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="146" column="26" selection-start-line="146" selection-start-column="21" selection-end-line="146" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/distributedkvconfig.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
@@ -233,10 +226,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1273">
+          <caret line="87" column="26" selection-start-line="87" selection-start-column="16" selection-end-line="87" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/router.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="177" column="24" selection-start-line="177" selection-start-column="24" selection-end-line="177" selection-end-column="24" />
+        <state relative-caret-position="273">
+          <caret line="215" column="9" selection-start-line="215" selection-start-column="9" selection-end-line="215" selection-end-column="9" />
         </state>
       </provider>
     </entry>

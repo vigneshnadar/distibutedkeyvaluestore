@@ -23,13 +23,6 @@ type keyValueStore struct {
     Value *string `json:"Value"`
 }
 
-
-type serverSetResp struct {
-    KeysAdded int `json:"keys_added"`
-    KeysFailed []keyStruct `json:"keys_failed"`
-}
-
-
 type keyValRequest struct {
     Key string `json:"Key"`
     Value string `json:"Value"`
@@ -54,34 +47,34 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 // this function takes the api endpoint method type and request body
 // creates a new http request from these parameters and returns the request
-func createRequest(apiurl string, reqBody interface{}, apimethod string) *http.Request {
+func createRequest(apiurl string, requestBody interface{}, apimethod string) *http.Request {
 
 // encode the request body
-  jsonStr, err := json.Marshal(&reqBody)
+  encodedJson, err := json.Marshal(&requestBody)
 
   if err != nil {
-  // fmt.Fprintln(err)
+  fmt.Println(err)
   return nil
   }
 
   // create a new http request
-  req, e := http.NewRequest(apimethod, apiurl, bytes.NewBuffer(jsonStr))
+  newRequest, e := http.NewRequest(apimethod, apiurl, bytes.NewBuffer(encodedJson))
 
   if e != nil {
-    // fmt.Fprintln(err)
+    fmt.Println(e)
     return nil
     }
 
-  return req
+  return newRequest
 }
 
 
 // read the body and return. body is returned as byte array
-func loadRespBody(resp *http.Response) []byte {
-body, readErr := ioutil.ReadAll(resp.Body)
+func loadRespBody(response *http.Response) []byte {
+body, err := ioutil.ReadAll(response.Body)
 
-if readErr != nil {
-log.Fatal(readErr)
+if err != nil {
+log.Fatal(err)
 }
 
 return body
@@ -117,16 +110,6 @@ json.Unmarshal(jsonBytes, &setReqs)
 return setReqs
 
 }
-
-
-
-// an array of bytes is decoded into a json array with key value attributes
-func loadServerSetResp(jsonBytes []byte) serverSetResp {
-var resps serverSetResp
-json.Unmarshal(jsonBytes, &resps)
-return resps
-}
-
 
 
 
@@ -173,7 +156,13 @@ func concatenateFetchServerResp(resps []*http.Response) ([]byte, int) {
  for _, response := range resps {
 
         if response.StatusCode >= 200 {
-        body := loadRespBody(response)
+        // body := loadRespBody(response)
+
+        body, err := ioutil.ReadAll(response.Body)
+
+        if err != nil {
+        log.Fatal(err)
+        }
 
 
         // the server returns the keys added
@@ -217,7 +206,15 @@ func concatenateServerResp(resps []*http.Response) ([]byte, int) {
  for _, response := range resps {
 
         if response.StatusCode >= 200 {
-        body := loadRespBody(response)
+        // body := loadRespBody(response)
+
+
+        body, err := ioutil.ReadAll(response.Body)
+
+        if err != nil {
+        log.Fatal(err)
+        }
+
         sresp := loadServerFetchResp(body)
 
         final = append(final, sresp...)
@@ -423,7 +420,6 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     setReqs := loadSetRequest(body)
 
 
-    isValid := true
     serverReqMap := make(map[int] []keyValRequest)
 
     for i:=0; i < len(setReqs); i++ {
@@ -437,12 +433,6 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
 
 
 
-
-
-    if !isValid {
-    break
-    }
-
     // select server by mod logic
     serverIdx := int(hash(keyValStr)) % len(keyValServer)
 
@@ -454,9 +444,6 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     } // end of for
 
 
-    if !isValid {
-    return
-    }
 
    // array of requests
     reqs := make([]*http.Request, 0)
@@ -502,7 +489,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
     keyReceived := extractKey(body)
 
 
-    isValid := true
+
     serverReqMap := make(map[int] []keyStruct)
 
     for i:=0; i < len(keyReceived); i++ {
@@ -513,9 +500,6 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
 
 
 
-    if !isValid {
-    break
-    }
 
     // select server by hash mod logic
     serverIdx := int(hash(keyValStr)) % len(keyValServer)
@@ -528,9 +512,6 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
     } // end of for
 
 
-    if !isValid {
-    return
-    }
 
    // array of requests
     reqs := make([]*http.Request, 0)
