@@ -9,7 +9,6 @@ import (
 "os"
 "sync"
 "encoding/json"
-"encoding/base64"
 "bytes"
 "time"
 )
@@ -19,7 +18,7 @@ type distributedserver struct {
    PortNum int `json:"PortNum"`
 }
 
-type serverFetchResp struct {
+type keyValueStore struct {
     Key string `json:"Key"`
     Value *string `json:"Value"`
 }
@@ -131,8 +130,8 @@ return resps
 
 
 // an array of bytes is decoded into a json array with key value attributes
-func loadServerFetchResp(jsonBytes []byte) []serverFetchResp {
-var resps []serverFetchResp
+func loadServerFetchResp(jsonBytes []byte) []keyValueStore {
+var resps []keyValueStore
 json.Unmarshal(jsonBytes, &resps)
 return resps
 }
@@ -185,7 +184,7 @@ func concatenateSetServerResp(resps []*http.Response) ([]byte, int) {
 // this function takes responses from all distributed servers and concatenates all the key values into a single json
 func concatenateFetchServerResp(resps []*http.Response) ([]byte, int) {
 
- final := make([]serverFetchResp, 0)
+ final := make([]keyValueStore, 0)
 
  code := 200
 
@@ -228,7 +227,7 @@ func concatenateFetchServerResp(resps []*http.Response) ([]byte, int) {
 func concatenateServerResp(resps []*http.Response) ([]byte, int) {
 
 // an array of key value pairs
- final := make([]serverFetchResp, 0)
+ final := make([]keyValueStore, 0)
 
  // success code
  code := 200
@@ -448,7 +447,7 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
 
     for i:=0; i < len(setReqs); i++ {
 
-    // keyEncoding := setReqs[i].Key.Encoding
+
     keyVal := setReqs[i].Key
 
     fmt.Printf("the key is %s\n", keyVal)
@@ -537,7 +536,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
     break
     }
 
-    // select server by mod logic
+    // select server by hash mod logic
     serverIdx := int(hash(keyValStr)) % len(keyValServer)
 
     fmt.Printf("Server Id %d\n", serverIdx)
