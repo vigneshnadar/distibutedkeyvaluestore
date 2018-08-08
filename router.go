@@ -19,12 +19,6 @@ type distributedserver struct {
    PortNum int `json:"PortNum"`
 }
 
-type Encoded struct {
- Encoding string `json:"encoding"`
- Data string `json:"data"`
-}
-
-
 type serverFetchResp struct {
     Key string `json:"Key"`
     Value *string `json:"Value"`
@@ -45,18 +39,24 @@ type clientFetQueReq struct {
     Key string `json:"Key"`
 }
 
+// an array to store server credentials
 var keyValServer []distributedserver
 
+// this function is the default display page for the router
+// it displays information about the APIs associated with each request
 func handler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Hi there, Welcome to distributed key value store")
-    fmt.Fprintf(w, "The API for get is /getkv")
-
-    // can add restful routing here
+    fmt.Fprintf(w, "The API for GET is /getallkv")
+    fmt.Fprintf(w, "The API for PUT is /putkv")
+    fmt.Fprintf(w, "The API for POST is /getkv")
 }
 
 
-
+// this function takes the api endpoint method type and request body
+// creates a new http request from these parameters and returns the request
 func createRequest(apiurl string, reqBody interface{}, apimethod string) *http.Request {
+
+// encode the request body
   jsonStr, err := json.Marshal(&reqBody)
 
   if err != nil {
@@ -64,6 +64,7 @@ func createRequest(apiurl string, reqBody interface{}, apimethod string) *http.R
   return nil
   }
 
+  // create a new http request
   req, e := http.NewRequest(apimethod, apiurl, bytes.NewBuffer(jsonStr))
 
   if e != nil {
@@ -86,7 +87,7 @@ log.Fatal(readErr)
 return body
 }
 
-// read the body and return. body is returned as byte array
+// read the body from the http request and return body is returned as byte array
 func loadReqBody(resp *http.Request) []byte {
 body, readErr := ioutil.ReadAll(resp.Body)
 
@@ -99,20 +100,16 @@ return body
 }
 
 
-func binToStr(s string) (string, bool) {
-  realStr := base64.StdEncoding.EncodeToString([]byte(s))
-  return realStr, true
-}
-
-
-
+// hash the given string and return an integer
 func hash(s string) uint32 {
+
+// this function is used to create a 32 bit hash
 h := fnv.New32a()
 h.Write([]byte(s))
 return h.Sum32()
 }
 
-// read the body and return. body is returned as byte array
+// an array of bytes is decoded into a json array with key value attributes
 func loadSetRequest(jsonBytes []byte) []clientSetReq {
 
 var setReqs []clientSetReq
@@ -123,7 +120,7 @@ return setReqs
 
 
 
-// takes the body as bytes , unmarshalls it and returns the struct
+// an array of bytes is decoded into a json array with key value attributes
 func loadServerSetResp(jsonBytes []byte) serverSetResp {
 var resps serverSetResp
 json.Unmarshal(jsonBytes, &resps)
@@ -133,7 +130,7 @@ return resps
 
 
 
-// takes the body as bytes , unmarshalls it and returns the struct
+// an array of bytes is decoded into a json array with key value attributes
 func loadServerFetchResp(jsonBytes []byte) []serverFetchResp {
 var resps []serverFetchResp
 json.Unmarshal(jsonBytes, &resps)
@@ -227,10 +224,13 @@ func concatenateFetchServerResp(resps []*http.Response) ([]byte, int) {
 
 
 
-// this function takes responses from all distributed servers and concatenates all the key values into a single json
+// this function takes  array of responses from all distributed servers and concatenates all the key values into a single json array
 func concatenateServerResp(resps []*http.Response) ([]byte, int) {
 
+// an array of key value pairs
  final := make([]serverFetchResp, 0)
+
+ // success code
  code := 200
 
 // loop over all response and concatenate json
@@ -258,26 +258,40 @@ func concatenateServerResp(resps []*http.Response) ([]byte, int) {
 
 }
 
+// it receives an array of http requests
 // this function creates a request pool and makes asynchronous GET request to servers
 func requestServers(reqs []*http.Request) ([]byte, int) {
 
      // when a server is requested it should be locked so that write does not occur at same time
      var mutex = &sync.Mutex{}
+
+     // a wait group is created . a wait group allows for asynchronous processing of tasks
+     // the processor will wait untill all the tasks in the wait group are completed
      var wg sync.WaitGroup
 
+
+     // create an array of http requests
      resps := make([]*http.Response, 0)
 
+    // add the count of request to wait group
      wg.Add(len(reqs))
 
+     // iterate through all the requests
      for _, curReq := range reqs {
 
+     // used for creating a concurrent pipeline
      go func(curReq *http.Request)   {
+
+     // the done function decreases the count of wait group by one
      defer wg.Done()
+
+     // the request is sent to the server
      curReq.Header.Set("Content-type", "application/json")
      client := &http.Client{}
      resp, err := client.Do(curReq)
      if err == nil {
 
+       // the response is appended to an array of responses
        mutex.Lock()
        resps = append(resps, resp)
        mutex.Unlock()
@@ -285,9 +299,11 @@ func requestServers(reqs []*http.Request) ([]byte, int) {
 
      }(curReq)
      } //end of for
-
+     // the processor waits till all the requests are processed
      wg.Wait()
 
+     // the array of responses is sent so that the key value pairs from all those responses
+     // can be combined into a single json array
      return concatenateServerResp(resps)
 
 
@@ -330,7 +346,7 @@ func requestSetServers(reqs []*http.Request) ([]byte, int) {
 }
 
 
-// this function creates a request pool and makes asynchronous PUT request to servers
+// this function creates a request pool and makes asynchronous POST request to servers
 func requestFetchServers(reqs []*http.Request) ([]byte, int) {
 
      // when a server is requested it should be locked so that write does not occur at same time
@@ -373,26 +389,41 @@ w.WriteHeader(code)
 w.Write(reply)
 }
 
+// this function returns all the key values stored in all the servers
 func getkeyvalue(w http.ResponseWriter, r *http.Request) {
-    // fmt.Fprintln("Hi getting key value")
+
+    // start the timer to measure performance of the GET request
     start := time.Now()
 
+    // create an array of type http request
     allserverreq := make([]*http.Request, 0)
 
+    // iterate over all the servers and make a get request one by one
     for i:=0; i < len(keyValServer); i++ {
 
-
+        // create an url to hit the endpoint of the server
         getapi := fmt.Sprintf("http://%s:%d/fetch", keyValServer[i].Host, keyValServer[i].PortNum)
 
+        // pass the api and the request type so that a request can be created
         currentReq := createRequest(getapi, nil, http.MethodGet)
+
+        // an array of requests is created
         allserverreq = append(allserverreq, currentReq)
     } // end of for
 
+    // pass the array of requests so that the actual requests can be made
+    // the response and the status code of the response is returned
     result, resultcode := requestServers(allserverreq)
+
+    // write the response to the writer and send it to the client
     sendResponse(w, r, result, resultcode)
-    fmt.Println("TOTAL TIME TAKEN %s", time.Since(start))
+
+    // once the response is sent back. stop the timer and display it to track metrics
+    fmt.Println("TOTAL TIME TAKEN FOR PUT REQUEST: %s", time.Since(start))
 }
 
+
+// check if there is an error in reading file
 func validate(e error) {
 if e != nil {
 // fmt.Fprintf("Error in reading file %v", e)
@@ -401,7 +432,7 @@ os.Exit(1)
 }
 
 
-// Hnadles the PUT REQUEST
+// Hnadles the PUT REQUEST. Puts a key value in the store
 func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     start := time.Now()
     var meth = "PUT"
@@ -424,9 +455,9 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     fmt.Printf("the value is %s\n", setReqs[i].Value)
     keyValStr := keyVal
 
-    // if keyEncoding == "binary" {
-      //  keyValStr, isValid := binToStr(keyValStr)
-    // }
+
+
+
 
     if !isValid {
     break
@@ -469,18 +500,18 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
                 result, resultcode := requestSetServers(reqs)
                 sendResponse(w, r, result, resultcode)
 
-        fmt.Println("TOTAL TIME TAKEN %s", time.Since(start))
+        fmt.Println("TOTAL TIME TAKEN FOR GET REQUEST: %s", time.Since(start))
     } // end of func
 
 
-
+// receives an array of bytes. decodes it and puts it in a json array with attribute key
 func extractKey(jsonBytes []byte) []clientFetQueReq {
 var req []clientFetQueReq
 json.Unmarshal(jsonBytes, &req)
 return req
 }
 
-// Hnadles the PUT REQUEST
+// Handles the POST REQUEST. A key is posted and a value is returned
 func getvalue(w http.ResponseWriter, r *http.Request) {
     start :=  time.Now()
     var meth = "POST"
@@ -500,9 +531,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
     keyVal := keyReceived[i].Key
     keyValStr := keyVal
 
-    // if keyEncoding == "binary" {
-      //  keyValStr, isValid := binToStr(keyValStr)
-    // }
+
 
     if !isValid {
     break
@@ -545,20 +574,32 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
                 result, resultcode := requestFetchServers(reqs)
                 sendResponse(w, r, result, resultcode)
 
-        fmt.Println("TOTAL TIME TAKEN %s", time.Since(start))
+        fmt.Println("TOTAL TIME TAKEN FOR POST REQUEST: %s", time.Since(start))
     } // end of func
 
 func main() {
 
 // reads all the servers IP and port from config file
 data, err := ioutil.ReadFile("distributedkvconfig.json")
+
+// check if there were errors while reading from file
 validate(err)
+
+// stores the array of server credentials
 json.Unmarshal(data, &keyValServer)
 
-   // routing
+// routing handlers specified here
 http.HandleFunc("/", handler)
+
+// gets all the key values
 http.HandleFunc("/getallkv", getkeyvalue)
+
+// a key is posted and a value is returned
 http.HandleFunc("/getkv", getvalue)
+
+// puts a key value in store
 http.HandleFunc("/putkv", putkeyvalue)
+
+// start the server on port 8080
 log.Fatal(http.ListenAndServe(":8080",  nil))
 }
