@@ -320,12 +320,6 @@ func requestFetchServers(arrReq []*http.Request) ([]byte, int) {
 }
 
 
-// sends the response of all concat json value
-func sendResponse(w http.ResponseWriter, r *http.Request, reply []byte, code int) {
-w.Header().Set("Content-Type", "application/json")
-w.WriteHeader(code)
-w.Write(reply)
-}
 
 // this function returns all the key values stored in all the servers
 func getkeyvalue(w http.ResponseWriter, r *http.Request) {
@@ -354,7 +348,6 @@ func getkeyvalue(w http.ResponseWriter, r *http.Request) {
     result, resultcode := requestServers(allserverreq)
 
     // write the response to the writer and send it to the client
-    // sendResponse(w, r, result, resultcode)
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(resultcode)
@@ -435,7 +428,7 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
                 } // end of for
 
                 result, resultcode := requestSetServers(arrRequest)
-               // sendResponse(w, r, result, resultcode)
+
 
                w.Header().Set("Content-Type", "application/json")
                    w.WriteHeader(resultcode)
@@ -511,7 +504,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
                 } // end of for
 
                 result, resultcode := requestFetchServers(arrRequest)
-                // sendResponse(w, r, result, resultcode)
+
 
                 w.Header().Set("Content-Type", "application/json")
                     w.WriteHeader(resultcode)
