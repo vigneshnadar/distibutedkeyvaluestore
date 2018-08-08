@@ -26,15 +26,16 @@ type keyValueStore struct {
 
 type serverSetResp struct {
     KeysAdded int `json:"keys_added"`
-    KeysFailed []clientFetQueReq `json:"keys_failed"`
+    KeysFailed []keyStruct `json:"keys_failed"`
 }
 
-type clientSetReq struct {
+
+type keyValRequest struct {
     Key string `json:"Key"`
     Value string `json:"Value"`
 }
 
-type clientFetQueReq struct {
+type keyStruct struct {
     Key string `json:"Key"`
 }
 
@@ -109,9 +110,9 @@ return h.Sum32()
 }
 
 // an array of bytes is decoded into a json array with key value attributes
-func loadSetRequest(jsonBytes []byte) []clientSetReq {
+func loadSetRequest(jsonBytes []byte) []keyValRequest {
 
-var setReqs []clientSetReq
+var setReqs []keyValRequest
 json.Unmarshal(jsonBytes, &setReqs)
 return setReqs
 
@@ -141,41 +142,21 @@ return resps
 // this function takes responses from all distributed servers and concatenates all the key values into a single json
 func concatenateSetServerResp(resps []*http.Response) ([]byte, int) {
 
- keysFailed := make([]clientFetQueReq, 0)
- keysAdded := 0
+
  code := 200
 
 // loop over all response and concatenate json
  for _, response := range resps {
 
         if response.StatusCode >= 200 {
-        body := loadRespBody(response)
-
-
-        // the server returns the keys added
-        sresp := loadServerSetResp(body)
-
-        keysAdded += sresp.KeysAdded
-
-        keysFailed = append(keysFailed, sresp.KeysFailed...)
+        code = 200
 
         } else {
         code = 206
         }
          response.Body.Close()
         } // end of for
-
-        final := serverSetResp{KeysAdded: keysAdded, KeysFailed: keysFailed}
-        // the json body is encoded
-        body, err := json.Marshal(final)
-
-        if err != nil {
-            // fmt.Fprintln(err)
-            return nil, 500
-            }
-
-        return body, code
-
+         return nil, code
 }
 
 
@@ -443,7 +424,7 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
 
 
     isValid := true
-    serverReqMap := make(map[int] []clientSetReq)
+    serverReqMap := make(map[int] []keyValRequest)
 
     for i:=0; i < len(setReqs); i++ {
 
@@ -504,8 +485,8 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
 
 
 // receives an array of bytes. decodes it and puts it in a json array with attribute key
-func extractKey(jsonBytes []byte) []clientFetQueReq {
-var req []clientFetQueReq
+func extractKey(jsonBytes []byte) []keyStruct {
+var req []keyStruct
 json.Unmarshal(jsonBytes, &req)
 return req
 }
@@ -522,7 +503,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
 
 
     isValid := true
-    serverReqMap := make(map[int] []clientFetQueReq)
+    serverReqMap := make(map[int] []keyStruct)
 
     for i:=0; i < len(keyReceived); i++ {
 

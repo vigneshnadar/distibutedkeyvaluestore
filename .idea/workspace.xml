@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="614bcbaf-9471-4a0d-96c6-a8a49aad01a1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router" beforeDir="false" afterPath="$PROJECT_DIR$/router" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -22,8 +20,8 @@
       <file leaf-file-name="router.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/router.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="148">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
+            <state relative-caret-position="444">
+              <caret line="177" column="24" selection-start-line="177" selection-start-column="24" selection-end-line="177" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -50,8 +48,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>/se</find>
-      <find>putkv</find>
       <find>_do_set</find>
       <find>Fet</find>
       <find>concatenateFetchServerResp</find>
@@ -62,13 +58,11 @@
       <find>.Data</find>
       <find>sendResponse</find>
       <find>json.Unmarshal(jsonBytes, &amp;resps)</find>
-      <find>loadServerSetResp</find>
       <find>loadRespBody</find>
       <find>requestSetServers</find>
       <find>concatenateSetServerResp</find>
       <find>loadReqBody</find>
       <find>loadSetRequest</find>
-      <find>clientSetReq</find>
       <find>NewDecoder</find>
       <find>TOTAL</find>
       <find>createRequest</find>
@@ -80,6 +74,10 @@
       <find>binToStr</find>
       <find>hash</find>
       <find>serverFetchResp</find>
+      <find>clientSetReq</find>
+      <find>clientFetQueReq</find>
+      <find>serverSetResp</find>
+      <find>loadServerSetResp</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -157,12 +155,12 @@
       <option name="presentableId" value="Default" />
       <updated>1533494811958</updated>
       <workItem from="1533494813516" duration="14889000" />
-      <workItem from="1533661459624" duration="13393000" />
+      <workItem from="1533661459624" duration="13968000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28282000" />
+    <option name="totallyTimeSpent" value="28857000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="823" extended-state="6" />
@@ -174,7 +172,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3292011" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.53305787" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.23553719" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -237,8 +235,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/router.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        <state relative-caret-position="444">
+          <caret line="177" column="24" selection-start-line="177" selection-start-column="24" selection-end-line="177" selection-end-column="24" />
         </state>
       </provider>
     </entry>
