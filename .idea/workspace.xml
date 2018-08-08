@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="614bcbaf-9471-4a0d-96c6-a8a49aad01a1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/router" beforeDir="false" afterPath="$PROJECT_DIR$/router" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router.go" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -20,8 +19,8 @@
       <file leaf-file-name="router.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/router.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="356" column="19" selection-start-line="356" selection-start-column="7" selection-end-line="356" selection-end-column="19" />
+            <state relative-caret-position="273">
+              <caret line="489" column="63" selection-start-line="489" selection-start-column="63" selection-end-line="489" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -29,7 +28,7 @@
       <file leaf-file-name="server.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1273">
+            <state relative-caret-position="-516">
               <caret line="87" column="26" selection-start-line="87" selection-start-column="16" selection-end-line="87" selection-end-column="26" />
             </state>
           </provider>
@@ -57,10 +56,8 @@
       <find>serverSetResp</find>
       <find>loadServerSetResp</find>
       <find>set</find>
-      <find>NewDecoder</find>
       <find>loadRespBody</find>
       <find>loadReqBody</find>
-      <find>keyHash</find>
       <find>hash</find>
       <find>loadSetRequest</find>
       <find>concatenateServerResp</find>
@@ -78,6 +75,8 @@
       <find>client</find>
       <find>serverReqs</find>
       <find>sendResponse</find>
+      <find>NewDecoder</find>
+      <find>keyHash</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -155,12 +154,12 @@
       <option name="presentableId" value="Default" />
       <updated>1533494811958</updated>
       <workItem from="1533494813516" duration="14889000" />
-      <workItem from="1533661459624" duration="18820000" />
+      <workItem from="1533661459624" duration="19255000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33709000" />
+    <option name="totallyTimeSpent" value="34144000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="823" extended-state="6" />
@@ -228,15 +227,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/server.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1273">
+        <state relative-caret-position="-516">
           <caret line="87" column="26" selection-start-line="87" selection-start-column="16" selection-end-line="87" selection-end-column="26" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/router.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="356" column="19" selection-start-line="356" selection-start-column="7" selection-end-line="356" selection-end-column="19" />
+        <state relative-caret-position="273">
+          <caret line="489" column="63" selection-start-line="489" selection-start-column="63" selection-end-line="489" selection-end-column="63" />
         </state>
       </provider>
     </entry>

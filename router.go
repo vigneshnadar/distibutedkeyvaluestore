@@ -69,14 +69,7 @@ func createRequest(apiurl string, requestBody interface{}, apimethod string) *ht
 }
 
 
-// hash the given string and return an integer
-func keyHash(key string) uint32 {
 
-// this function is used to create a 32 bit hash
-hashFunc := fnv.New32a()
-hashFunc.Write([]byte(key))
-return hashFunc.Sum32()
-}
 
 
 
@@ -397,7 +390,14 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
 
 
     // select server by mod logic
-    findServer := int(keyHash(keyValStr)) % len(keyValServer)
+
+    hashFunc := fnv.New32a()
+    hashFunc.Write([]byte(keyValStr))
+
+
+    findServer := int(hashFunc.Sum32()) % len(keyValServer)
+
+
 
     fmt.Printf("Server Id %d\n", findServer)
 
@@ -473,7 +473,15 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
 
 
     // select server by hash mod logic
-    findServer := int(keyHash(keyValStr)) % len(keyValServer)
+
+     // select server by mod logic
+
+        hashFunc := fnv.New32a()
+        hashFunc.Write([]byte(keyValStr))
+
+
+        findServer := int(hashFunc.Sum32()) % len(keyValServer)
+
 
     fmt.Printf("Server Id %d\n", findServer)
 
