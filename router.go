@@ -69,30 +69,6 @@ func createRequest(apiurl string, requestBody interface{}, apimethod string) *ht
 }
 
 
-// read the body and return. body is returned as byte array
-func loadRespBody(response *http.Response) []byte {
-body, err := ioutil.ReadAll(response.Body)
-
-if err != nil {
-log.Fatal(err)
-}
-
-return body
-}
-
-// read the body from the http request and return body is returned as byte array
-func loadReqBody(resp *http.Request) []byte {
-body, readErr := ioutil.ReadAll(resp.Body)
-
-if readErr != nil {
-log.Fatal(readErr)
-return nil
-}
-
-return body
-}
-
-
 // hash the given string and return an integer
 func hash(s string) uint32 {
 
@@ -156,7 +132,6 @@ func concatenateFetchServerResp(resps []*http.Response) ([]byte, int) {
  for _, response := range resps {
 
         if response.StatusCode >= 200 {
-        // body := loadRespBody(response)
 
         body, err := ioutil.ReadAll(response.Body)
 
@@ -206,8 +181,6 @@ func concatenateServerResp(resps []*http.Response) ([]byte, int) {
  for _, response := range resps {
 
         if response.StatusCode >= 200 {
-        // body := loadRespBody(response)
-
 
         body, err := ioutil.ReadAll(response.Body)
 
@@ -415,8 +388,13 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     var meth = "PUT"
     fmt.Printf("Hi putting key value %s\n", meth)
 
+    body, err := ioutil.ReadAll(r.Body)
 
-    body := loadReqBody(r)
+    if err != nil {
+    log.Fatal(err)
+    }
+
+
     setReqs := loadSetRequest(body)
 
 
@@ -485,7 +463,12 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
     fmt.Printf("Hi GET corresponding  value %s\n", meth)
 
 
-    body := loadReqBody(r)
+    body, err := ioutil.ReadAll(r.Body)
+
+    if err != nil {
+    log.Fatal(err)
+    }
+
     keyReceived := extractKey(body)
 
 
