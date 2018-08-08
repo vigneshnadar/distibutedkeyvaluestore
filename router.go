@@ -70,30 +70,12 @@ func createRequest(apiurl string, requestBody interface{}, apimethod string) *ht
 
 
 // hash the given string and return an integer
-func hash(s string) uint32 {
+func keyHash(key string) uint32 {
 
 // this function is used to create a 32 bit hash
-h := fnv.New32a()
-h.Write([]byte(s))
-return h.Sum32()
-}
-
-// an array of bytes is decoded into a json array with key value attributes
-func loadSetRequest(jsonBytes []byte) []keyValRequest {
-
-var setReqs []keyValRequest
-json.Unmarshal(jsonBytes, &setReqs)
-return setReqs
-
-}
-
-
-
-// an array of bytes is decoded into a json array with key value attributes
-func loadServerFetchResp(jsonBytes []byte) []keyValueStore {
-var resps []keyValueStore
-json.Unmarshal(jsonBytes, &resps)
-return resps
+hashFunc := fnv.New32a()
+hashFunc.Write([]byte(key))
+return hashFunc.Sum32()
 }
 
 
@@ -141,7 +123,11 @@ func concatenateFetchServerResp(resps []*http.Response) ([]byte, int) {
 
 
         // the server returns the keys added
-        sresp := loadServerFetchResp(body)
+
+        var sresp []keyValueStore
+        json.Unmarshal(body, &sresp)
+
+
 
 
 
@@ -188,7 +174,10 @@ func concatenateServerResp(resps []*http.Response) ([]byte, int) {
         log.Fatal(err)
         }
 
-        sresp := loadServerFetchResp(body)
+
+        var sresp []keyValueStore
+        json.Unmarshal(body, &sresp)
+
 
         final = append(final, sresp...)
 
@@ -395,8 +384,8 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
     }
 
 
-    setReqs := loadSetRequest(body)
-
+    var setReqs []keyValRequest
+    json.Unmarshal(body, &setReqs)
 
     serverReqMap := make(map[int] []keyValRequest)
 
@@ -412,7 +401,7 @@ func putkeyvalue(w http.ResponseWriter, r *http.Request) {
 
 
     // select server by mod logic
-    serverIdx := int(hash(keyValStr)) % len(keyValServer)
+    serverIdx := int(keyHash(keyValStr)) % len(keyValServer)
 
     fmt.Printf("Server Id %d\n", serverIdx)
 
@@ -485,7 +474,7 @@ func getvalue(w http.ResponseWriter, r *http.Request) {
 
 
     // select server by hash mod logic
-    serverIdx := int(hash(keyValStr)) % len(keyValServer)
+    serverIdx := int(keyHash(keyValStr)) % len(keyValServer)
 
     fmt.Printf("Server Id %d\n", serverIdx)
 

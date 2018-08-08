@@ -20,8 +20,8 @@
       <file leaf-file-name="router.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/router.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="107">
-              <caret line="409" column="18" selection-start-line="409" selection-start-column="18" selection-end-line="409" selection-end-column="18" />
+            <state relative-caret-position="219">
+              <caret line="135" column="17" selection-start-line="135" selection-start-column="17" selection-end-line="135" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -48,10 +48,8 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Fet</find>
       <find>concatenateFetchServerResp</find>
       <find>handleGetAllKeys</find>
-      <find>loadServerFetchResp</find>
       <find>Encoded</find>
       <find>handleSet</find>
       <find>.Data</find>
@@ -59,7 +57,6 @@
       <find>json.Unmarshal(jsonBytes, &amp;resps)</find>
       <find>requestSetServers</find>
       <find>concatenateSetServerResp</find>
-      <find>loadSetRequest</find>
       <find>TOTAL</find>
       <find>createRequest</find>
       <find>getkeyvalue</find>
@@ -68,7 +65,6 @@
       <find>putkeyvalue</find>
       <find>getvalue</find>
       <find>binToStr</find>
-      <find>hash</find>
       <find>serverFetchResp</find>
       <find>clientSetReq</find>
       <find>clientFetQueReq</find>
@@ -78,6 +74,10 @@
       <find>NewDecoder</find>
       <find>loadRespBody</find>
       <find>loadReqBody</find>
+      <find>keyHash</find>
+      <find>hash</find>
+      <find>loadSetRequest</find>
+      <find>loadServerFetchResp</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -155,12 +155,12 @@
       <option name="presentableId" value="Default" />
       <updated>1533494811958</updated>
       <workItem from="1533494813516" duration="14889000" />
-      <workItem from="1533661459624" duration="15840000" />
+      <workItem from="1533661459624" duration="16460000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="30729000" />
+    <option name="totallyTimeSpent" value="31349000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="823" extended-state="6" />
@@ -235,8 +235,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/router.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="107">
-          <caret line="409" column="18" selection-start-line="409" selection-start-column="18" selection-end-line="409" selection-end-column="18" />
+        <state relative-caret-position="219">
+          <caret line="135" column="17" selection-start-line="135" selection-start-column="17" selection-end-line="135" selection-end-column="17" />
         </state>
       </provider>
     </entry>
